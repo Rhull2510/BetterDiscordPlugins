@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  generate_readme:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup Node.JS
+        uses: actions/setup-node@v1
+        
+      - name: Install Dependencies
+        run:  npm install fs
+        
+      - name: Generate README
+        run:  node generate_readme.js
+        
+      - name: Commit README changes
+        run:  cmp -s README.md README-new.md || (
+              mv README-new.md README.md
+           && git config user.name 'Xpl0itR'
+           && git config user.email 'xpl0itr@outlook.com'
+           && git add --all
+           && git commit -m "Update README.md"
+           && git push
+         )
